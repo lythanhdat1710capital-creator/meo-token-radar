@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Token Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">TOKEN RADAR · <span id="asOf"></span></p>
+    <h1>Which protocol launches next — and what is it worth?</h1>
+    <p class="lede">Every protocol in the snapshot that records no token, ranked by the implied value of
+      the token it may one day issue. The value follows from the protocol's own figures — its TVL,
+      its seven-day growth, how long it has run with no token — never from a hand-kept list of names.</p>
+    <p class="meta" id="metaLine"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="stats" id="stats" aria-label="Board summary"></section>
+
+  <nav class="tabs" aria-label="Views">
+    <button type="button" data-tab="board" class="active">Board</button>
+    <button type="button" data-tab="live">Live tokens</button>
+    <button type="button" data-tab="setaside">Set aside</button>
+    <button type="button" data-tab="model">How the model works</button>
+  </nav>
+
+  <section id="view-board" class="view">
+    <div class="controls">
+      <label class="ctl">Search
+        <input id="q" type="search" placeholder="Name or slug…" autocomplete="off">
+      </label>
+      <label class="ctl">Category
+        <select id="cat"><option value="">All categories</option></select>
+      </label>
+      <label class="ctl">Chain
+        <select id="chain"><option value="">All chains</option></select>
+      </label>
+      <label class="ctl">Sort by
+        <select id="sort">
+          <option value="value">Implied value</option>
+          <option value="tvl">TVL</option>
+          <option value="growth">7-day change</option>
+          <option value="age">Age</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </label>
+      <label class="check"><input id="wlOnly" type="checkbox"> Watchlist only</label>
+      <label class="check"><input id="earlyOnly" type="checkbox"> Early finds only</label>
+    </div>
+    <p class="count" id="count"></p>
+    <div class="tablewrap">
+      <table id="boardTable">
+        <thead><tr>
+          <th class="num">#</th><th>Protocol</th><th>Category</th><th>Chains</th>
+          <th class="num">TVL</th><th class="num">7d</th><th class="num">Age</th>
+          <th class="num">Implied value</th>
+        </tr></thead>
+        <tbody id="boardBody"></tbody>
+      </table>
+    </div>
+    <section id="detail" class="detail" hidden></section>
+  </section>
+
+  <section id="view-live" class="view" hidden>
+    <p class="intro">These protocols already trade. The board shows the market's own value for them —
+      a market cap, not a model's guess — so they never mix into the ranked board.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Protocol</th><th>Category</th><th>Chains</th>
+          <th class="num">TVL</th><th class="num">Market cap</th><th class="num">Mcap / TVL</th><th class="num">7d</th>
+        </tr></thead>
+        <tbody id="liveBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="view-setaside" class="view" hidden>
+    <p class="intro">These protocols record no token, but they are not launch candidates: each is a wrapped,
+      staked or bridged product of a token that already trades, a pool of another protocol, or an
+      exchange product. They are set aside here with the reason, not hidden.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr>
+          <th>Protocol</th><th>Category</th><th class="num">TVL</th><th>Why it is set aside</th>
+        </tr></thead>
+        <tbody id="setAsideBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="view-model" class="view" hidden>
+    <h2>How the model works</h2>
+    <p>Implied value = TVL × category multiple × growth × maturity × chains. Every input comes
+      from the snapshot itself; no protocol name is ever special-cased.</p>
+    <ol class="modelsteps">
+      <li><strong>Category multiple.</strong> For each category, the median market-cap-per-TVL of the
+        tokens already trading in that category, shrunk toward the market-wide median
+        (<span id="globalMed"></span>) with a prior of 8, clamped to 0.05–1.00. A category with few
+        live tokens counts less; one with none takes the market-wide median.</li>
+      <li><strong>Growth.</strong> The seven-day TVL change, clamped to −50%…+100%, moves the value by
+        0.6× the change. Unknown growth counts as 0.</li>
+      <li><strong>Maturity.</strong> The value rises with age to a full 1.00 at two years, then eases
+        to 0.80 by five years: longevity proves staying power, but five silent years suggest the
+        team may never issue a token. Unknown age counts as one year.</li>
+      <li><strong>Chains.</strong> Each extra chain adds 2%, up to +20%: wider distribution, wider
+        holder base.</li>
+    </ol>
+    <h3>Category multiples learned from the live set</h3>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Category</th><th class="num">Live tokens</th><th class="num">Median mcap / TVL</th><th class="num">Multiple used</th></tr></thead>
+        <tbody id="multBody"></tbody>
+      </table>
+    </div>
+    <p class="note">A protocol “records no token” when its DefiLlama record carries no market cap, no
+      CoinGecko id and no symbol. That is the record's word, never proof it has none.</p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p id="sourceLine"></p>
+  <p>Implied value is this entry's own claim, never one make.fun makes. It does not predict whether
+    or when a token is issued. Farming any protocol carries risk: a token may never come, a
+    contract may fail, and a position may lose money. Never pay a fee to claim an airdrop.</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
